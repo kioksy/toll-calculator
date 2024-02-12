@@ -1,0 +1,71 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum RegisteredPriceReason {
+    WEEKEND
+    HOLIDAY
+    FREE_MONTH
+    NEW_TICKET
+    TICKET_EXISTS
+    LAST_TICKET_TODAY
+    OUTSIDE_BILLING_HOURS
+    MAX_DAILY_BILL
+    FREE_VEHICLE_TYPE
+}
+
+model VehicleType {
+  id            Int         @id @default(autoincrement())
+  name          String      @unique
+  vehicles      Vehicle[]
+  has_pricing   Boolean
+  @@map("vehicle_types")
+}
+
+model Vehicle {
+  id                    Int                     @id @default(autoincrement())
+  regNr                 String                  @unique
+  vehicleTypeId         Int 
+  VehicleType           VehicleType             @relation(fields: [vehicleTypeId], references: [id])
+  tollRegistrationLogs  TollRegistrationLog[]
+  @@map("vehicles")
+}
+
+model TollRegistrationLog {
+  id                        Int             @id @default(autoincrement())
+  vehicleId                 Int
+  registeredAt              DateTime        @default(now())
+  regiteredPrice            Float
+  registeredPriceReason     RegisteredPriceReason
+  Vehicle                   Vehicle         @relation(fields: [vehicleId], references: [id])
+  @@map("toll_registration_logs")
+}
+
+model TollPrice {
+  id                    Int             @id @default(autoincrement())
+  price                 Float
+  from                  String
+  until                 String
+  valid_until           DateTime        @db.Date          
+  @@map("toll_prices")
+}
+
+model TotalDailyPrice {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  price     Float
+  from      DateTime    @db.Date
+  until     DateTime    @db.Date
+  @@map("toll_total_daily_price")
+}
+
+model Holiday {
+  id    Int         @id @default(autoincrement())
+  date  DateTime    @unique @db.Date
+  @@map("holidays")
+}

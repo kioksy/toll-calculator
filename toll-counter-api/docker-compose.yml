@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    container_name: toll-counter-api
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://prisma:prisma@db:5432/toll-counter-db?schema=public
+    volumes:
+      - .:/api
+      - /api/node_modules
+    depends_on:
+      - db
+    command: sh -c "npx prisma migrate deploy && npm run start"
+
+  db:
+    image: postgres:latest
+    container_name: toll-counter-db
+    restart: always
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: toll-counter-db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

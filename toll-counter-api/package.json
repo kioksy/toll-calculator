@@ -1,0 +1,17 @@
+{
+  "name": "toll-counter-api",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "An Express app that handles Toll API requests",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Antonios Kioksoglou",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "prisma": "^5.9.1"
+  }
+}
